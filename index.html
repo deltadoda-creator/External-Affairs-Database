@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoEA Database Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(10, 10, 20, 0.95);
+            padding: 1.8rem;
+            border-bottom: 1px solid #2a2a3a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+            color: #4cc9f0;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-container {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(30, 30, 46, 0.7);
+            color: #b8b8d0;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(67, 97, 238, 0.3);
+            color: #e0e0ff;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: rgba(67, 97, 238, 0.5);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 2rem auto;
+            gap: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .welcome-section {
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2a2a3a;
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .welcome-subtitle {
+            color: #b8b8d0;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .portal-card {
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2a2a3a;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            border-color: #4361ee;
+        }
+
+        .portal-icon {
+            font-size: 2.5rem;
+            color: #4cc9f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .portal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .portal-description {
+            color: #b8b8d0;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .portal-btn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .portal-btn:hover {
+            background: #3a56e0;
+            box-shadow: 0 0 15px rgba(67, 97, 238, 0.5);
+        }
+
+        .content-section {
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2a2a3a;
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #2a2a3a;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .content-subtitle {
+            color: #b8b8d0;
+            font-size: 1.1rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 10px;
+            padding: 1.8rem;
+            text-align: center;
+            border-top: 4px solid #4361ee;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #4cc9f0;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #b8b8d0;
+            font-size: 1rem;
+        }
+
+        .database-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .database-table th {
+            background: rgba(40, 40, 60, 0.8);
+            padding: 1.2rem;
+            text-align: left;
+            color: #4cc9f0;
+            font-weight: 600;
+        }
+
+        .database-table td {
+            padding: 1.2rem;
+            border-bottom: 1px solid #2a2a3a;
+        }
+
+        .status-friendly {
+            color: #28ca42;
+            font-weight: 600;
+        }
+
+        .status-neutral {
+            color: #ffbd2e;
+            font-weight: 600;
+        }
+
+        .status-hostile {
+            color: #ff5f57;
+            font-weight: 600;
+        }
+
+        .access-panel {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid #2a2a3a;
+        }
+
+        .access-title {
+            color: #4cc9f0;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .access-input {
+            background: rgba(10, 10, 20, 0.8);
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 1rem;
+            color: #ffffff;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .access-btn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .access-btn:hover {
+            background: #3a56e0;
+            box-shadow: 0 0 15px rgba(67, 97, 238, 0.5);
+        }
+
+        .footer {
+            background: rgba(10, 10, 20, 0.9);
+            padding: 1.8rem;
+            border-top: 1px solid #2a2a3a;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #b8b8d0;
+            font-size: 0.95rem;
+        }
+
+        .back-btn {
+            background: rgba(30, 30, 46, 0.7);
+            color: #b8b8d0;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(67, 97, 238, 0.3);
+            color: #e0e0ff;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .portal-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="logo-text">DoEA DATABASE</div>
+            </div>
+            <div class="nav-container">
+                <button class="nav-btn active" data-target="main-portal"><i class="fas fa-home"></i> Main Portal</button>
+                <button class="nav-btn" data-target="info-portal"><i class="fas fa-info-circle"></i> Information</button>
+                <button class="nav-btn" data-target="database-portal"><i class="fas fa-server"></i> Database</button>
+                <button class="nav-btn" data-target="operation-portal"><i class="fas fa-cog"></i> Operation</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Main Portal (Default View) -->
+        <div id="main-portal" class="content-section active">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Department of External Affairs Database</h1>
+                <p class="welcome-subtitle">Secure access portal for monitoring and managing Groups of Interest (GOIs) outside the SCP Foundation. Authorized personnel only.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value">247</div>
+                        <div class="stat-label">GOIs Tracked</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">42</div>
+                        <div class="stat-label">Active Operations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">System Efficiency</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">16</div>
+                        <div class="stat-label">Priority Alerts</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portal-grid">
+                <div class="portal-card">
+                    <div class="portal-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h3 class="portal-title">DoEA Information</h3>
+                    <p class="portal-description">Learn about the Department of External Affairs, our mission, and our role in monitoring Groups of Interest.</p>
+                    <button class="portal-btn" data-target="info-portal">
+                        <i class="fas fa-arrow-right"></i> Access Portal
+                    </button>
+                </div>
+                
+                <div class="portal-card">
+                    <div class="portal-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="portal-title">DoEA Database</h3>
+                    <p class="portal-description">Access the complete database of Groups of Interest with status, threat levels, and contact information.</p>
+                    <button class="portal-btn" data-target="database-portal">
+                        <i class="fas fa-arrow-right"></i> Access Portal
+                    </button>
+                </div>
+                
+                <div class="portal-card">
+                    <div class="portal-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3 class="portal-title">Operation Portal</h3>
+                    <p class="portal-description">Restricted access portal for ongoing operations. Requires special authorization.</p>
+                    <button class="portal-btn" data-target="operation-portal">
+                        <i class="fas fa-lock"></i> Access Portal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Portal -->
+        <div id="info-portal" class="content-section">
+            <button class="back-btn" data-target="main-portal">
+                <i class="fas fa-arrow-left"></i> Back to Main Portal
+            </button>
+            
+            <div class="content-header">
+                <h1 class="content-title">Department of External Affairs</h1>
+                <p class="content-subtitle">Information about our mission and operations</p>
+            </div>
+            
+            <div class="portal-card">
+                <h3>Our Mission</h3>
+                <p>The Department of External Affairs is responsible for monitoring, analyzing, and establishing diplomatic relations with Groups of Interest (GOIs) outside the SCP Foundation.</p>
+                
+                <h3 style="margin-top: 1.5rem;">Key Responsibilities</h3>
+                <ul style="margin-left: 1.5rem; margin-top: 1rem; line-height: 1.6;">
+                    <li>Tracking and documenting all known GOIs</li>
+                    <li>Establishing communication protocols</li>
+                    <li>Assessing threat levels and intentions</li>
+                    <li>Coordinating with other Foundation departments</li>
+                    <li>Managing diplomatic relations with neutral and friendly GOIs</li>
+                </ul>
+                
+                <h3 style="margin-top: 1.5rem;">Current Priorities</h3>
+                <p>Monitor hostile GOI activities and maintain neutral/friendly relations where possible. Current focus is on containing potential XK-Class scenarios originating from hostile GOIs.</p>
+            </div>
+        </div>
+
+        <!-- Database Portal -->
+        <div id="database-portal" class="content-section">
+            <button class="back-btn" data-target="main-portal">
+                <i class="fas fa-arrow-left"></i> Back to Main Portal
+            </button>
+            
+            <div class="content-header">
+                <h1 class="content-title">DoEA Database</h1>
+                <p class="content-subtitle">Groups of Interest tracking and management</p>
+            </div>
+            
+            <table class="database-table">
+                <thead>
+                    <tr>
+                        <th>GOI ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Threat Level</th>
+                        <th>Last Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GOI-001</td>
+                        <td>Serpent's Hand</td>
+                        <td class="status-neutral">Neutral</td>
+                        <td>Medium</td>
+                        <td>2023-10-15</td>
+                    </tr>
+                    <tr>
+                        <td>GOI-002</td>
+                        <td>Global Occult Coalition</td>
+                        <td class="status-friendly">Friendly</td>
+                        <td>Low</td>
+                        <td>2023-11-02</td>
+                    </tr>
+                    <tr>
+                        <td>GOI-003</td>
+                        <td>Chaos Insurgency</td>
+                        <td class="status-hostile">Hostile</td>
+                        <td>High</td>
+                        <td>2023-09-28</td>
+                    </tr>
+                    <tr>
+                        <td>GOI-004</td>
+                        <td>Marshall, Carter and Dark Ltd.</td>
+                        <td class="status-neutral">Neutral</td>
+                        <td>Medium</td>
+                        <td>2023-10-30</td>
+                    </tr>
+                    <tr>
+                        <td>GOI-005</td>
+                        <td>Church of the Broken God</td>
+                        <td class="status-hostile">Hostile</td>
+                        <td>High</td>
+                        <td>2023-11-10</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="access-panel">
+                <div class="access-title">
+                    <i class="fas fa-user-shield"></i> Admin Panel Access
+                </div>
+                <p>Access the administrative panel to edit database entries. Requires authorization.</p>
+                <input type="password" class="access-input" id="admin-code" placeholder="Enter admin access code...">
+                <button class="access-btn" id="admin-btn">Authenticate</button>
+                <div id="admin-message" style="margin-top: 1rem;"></div>
+            </div>
+        </div>
+
+        <!-- Operation Portal -->
+        <div id="operation-portal" class="content-section">
+            <button class="back-btn" data-target="main-portal">
+                <i class="fas fa-arrow-left"></i> Back to Main Portal
+            </button>
+            
+            <div class="content-header">
+                <h1 class="content-title">Operation Portal</h1>
+                <p class="content-subtitle">Restricted access - Authorized personnel only</p>
+            </div>
+            
+            <div class="access-panel">
+                <div class="access-title">
+                    <i class="fas fa-lock"></i> Restricted Access
+                </div>
+                <p>This portal contains sensitive operation data. Access requires special authorization.</p>
+                <input type="password" class="access-input" id="operation-code" placeholder="Enter operation access code...">
+                <button class="access-btn" id="operation-btn">Authenticate</button>
+                <div id="operation-message" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <div id="operation-content" style="display: none; margin-top: 2rem;">
+                <div class="portal-card">
+                    <h3>OPERATION: SILENT WATCH</h3>
+                    <p><strong>Clearance Level:</strong> OMEGA</p>
+                    <p><strong>Current Status:</strong> ACTIVE</p>
+                    <p><strong>Objective:</strong> Monitor and contain potential XK-Class scenarios originating from hostile GOIs.</p>
+                    
+                    <h4 style="margin-top: 1.5rem;">Authorized Personnel:</h4>
+                    <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+                        <li>Director ██████</li>
+                        <li>Agent █████</li>
+                        <li>Researcher ███████</li>
+                    </ul>
+                    
+                    <p style="margin-top: 1.5rem;"><strong>Next Briefing:</strong> ██/██/████</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            <div>DoEA Database System | Classified Level 4 Clearance Required</div>
+            <div>Secure Connection Established | Last Update: 11/14/2023</div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const contentSections = document.querySelectorAll('.content-section');
+        const portalButtons = document.querySelectorAll('.portal-btn');
+        const backButtons = document.querySelectorAll('.back-btn');
+        
+        // Function to show a specific section
+        function showSection(sectionId) {
+            // Hide all sections
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show the target section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active nav button
+            navButtons.forEach(button => {
+                if (button.getAttribute('data-target') === sectionId) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+        
+        // Add event listeners to nav buttons
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetSection = button.getAttribute('data-target');
+                showSection(targetSection);
+            });
+        });
+        
+        // Add event listeners to portal buttons
+        portalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetSection = button.getAttribute('data-target');
+                showSection(targetSection);
+            });
+        });
+        
+        // Add event listeners to back buttons
+        backButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetSection = button.getAttribute('data-target');
+                showSection(targetSection);
+            });
+        });
+        
+        // Admin panel access
+        document.getElementById('admin-btn').addEventListener('click', () => {
+            const code = document.getElementById('admin-code').value;
+            const message = document.getElementById('admin-message');
+            
+            if (code === 'Admin1Admin2') {
+                message.innerHTML = '<span style="color:#28ca42;">Access granted. Admin panel functionality would be enabled here.</span>';
+            } else {
+                message.innerHTML = '<span style="color:#ff5f57;">Invalid access code. Please try again.</span>';
+            }
+        });
+        
+        // Operation portal access
+        document.getElementById('operation-btn').addEventListener('click', () => {
+            const code = document.getElementById('operation-code').value;
+            const message = document.getElementById('operation-message');
+            const content = document.getElementById('operation-content');
+            
+            if (code === 'TEST123') {
+                message.innerHTML = '<span style="color:#28ca42;">Access granted. Welcome, authorized personnel.</span>';
+                content.style.display = 'block';
+            } else {
+                message.innerHTML = '<span style="color:#ff5f57;">Invalid access code. Attempt logged.</span>';
+                content.style.display = 'none';
+            }
+        });
+        
+        // Allow Enter key to submit access codes
+        document.getElementById('admin-code').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('admin-btn').click();
+            }
+        });
+        
+        document.getElementById('operation-code').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('operation-btn').click();
+            }
+        });
+    </script>
+</body>
+</html>
